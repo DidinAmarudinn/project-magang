@@ -1,3 +1,4 @@
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:nabung_beramal/colors/colors_schema.dart';
 import 'package:nabung_beramal/data/celengan_model.dart';
@@ -18,9 +19,11 @@ class _TambahTabunganState extends State<TambahTabungan> {
   String textButton = "Simpan";
   String title = "Buat Tabungan";
   String valueChip = "Tabungan Haji";
+  bool show = false;
   bool peningat;
   var now = DateTime.now();
   final cNamaTarget = TextEditingController();
+  final cKategori = TextEditingController();
   final cNominalTarget = TextEditingController();
   final cDeskrpsi = TextEditingController();
   final cLamaTarget = TextEditingController();
@@ -54,12 +57,25 @@ class _TambahTabunganState extends State<TambahTabungan> {
         cDeskrpsi.text,
         getLamaTarget(),
         dateNow,
-        valueChip,
+        cKategori.text,
         progress,
         _value,
         0);
     await db.saveData(dbCelengan);
     print("Saved");
+  }
+
+  void showFlushbar(BuildContext context) {
+    Flushbar(
+      margin: EdgeInsets.all(16),
+      padding: EdgeInsets.all(10),
+      borderRadius: 8,
+      backgroundColor: ColorsSchema().primaryColors,
+      dismissDirection: FlushbarDismissDirection.HORIZONTAL,
+      duration: Duration(seconds: 3),
+      title: "form tidak boleh kosong",
+      message: "mohon isi semua form di atas",
+    )..show(context);
   }
 
   Future updateRecord() async {
@@ -72,7 +88,7 @@ class _TambahTabunganState extends State<TambahTabungan> {
         cDeskrpsi.text,
         getLamaTarget(),
         dateNow,
-        valueChip,
+        cKategori.text,
         widget.celenganModel.progress,
         _value,
         1);
@@ -92,6 +108,8 @@ class _TambahTabunganState extends State<TambahTabungan> {
       cDeskrpsi.text = cele.deskrpsi;
       int result = (cele.lamaTarget / 30).toInt();
       cLamaTarget.text = result.toString();
+      cKategori.text = cele.namaKategori;
+      show = true;
       _value = cele.indexKategori;
     }
   }
@@ -114,7 +132,15 @@ class _TambahTabunganState extends State<TambahTabungan> {
       floatingActionButton: FloatingActionButton.extended(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           onPressed: () {
-            saveData();
+            if (cNamaTarget.text.length > 0 &&
+                cDeskrpsi.text.length > 0 &&
+                cLamaTarget.text.length > 0 &&
+                cNominalTarget.text.length > 0 &&
+                cKategori.text.length > 0) {
+              saveData();
+            } else {
+              showFlushbar(context);
+            }
           },
           backgroundColor: ColorsSchema().primaryColors,
           label: Text(widget.isNew ? textButton : "Update")),
@@ -157,11 +183,12 @@ class _TambahTabunganState extends State<TambahTabungan> {
                   (int index) {
                     String chip = list[index];
                     return Padding(
-                      padding: const EdgeInsets.only(right: 4),
+                      padding: const EdgeInsets.only(right: 8),
                       child: ChoiceChip(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(3)),
                         backgroundColor: Colors.white,
+                        padding: EdgeInsets.all(12),
                         selectedColor: ColorsSchema().primaryColors,
                         label: Text(
                           chip,
@@ -173,8 +200,18 @@ class _TambahTabunganState extends State<TambahTabungan> {
                         selected: _value == index,
                         onSelected: (bool selected) {
                           setState(() {
-                            valueChip = chip;
                             _value = index;
+                            cKategori.text = chip;
+                            if (cKategori.text == "Lainnya") {
+                              setState(() {
+                                show = true;
+                                cKategori.text = "";
+                              });
+                            } else {
+                              setState(() {
+                                show = false;
+                              });
+                            }
                             print(_value);
                           });
                         },
@@ -183,6 +220,10 @@ class _TambahTabunganState extends State<TambahTabungan> {
                   },
                 ).toList(),
               ),
+              show
+                  ? buildColumn(
+                      context, "Kategori", TextInputType.text, cKategori)
+                  : SizedBox(),
               SizedBox(
                 height: 12,
               ),

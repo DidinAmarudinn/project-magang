@@ -70,6 +70,29 @@ class DbCelengan {
     return res > 0 ? true : false;
   }
 
+  Future<List<CelenganModel>> getListCelengan(int nominal) async {
+    var dbClient = await db;
+    List<Map> list = await dbClient.rawQuery(
+        "SELECT * FROM db_celengan WHERE progress >=?", <int>[nominal]);
+    List<CelenganModel> listData = new List();
+    for (int i = 0; i < list.length; i++) {
+      var celengan = new CelenganModel(
+          list[i]['namaTarget'],
+          list[i]['nominalTarget'],
+          list[i]['deskripsi'],
+          list[i]['lamaTarget'],
+          list[i]['createDate'],
+          list[i]["namaKategori"],
+          list[i]['progress'],
+          list[i]['indexKategori'],
+          list[i]['pengingat']);
+      celengan.setId(list[i]['id']);
+
+      listData.add(celengan);
+    }
+    return listData;
+  }
+
   Future<int> deleteData(CelenganModel celenganModel) async {
     var dbClient = await db;
     int res = await dbClient

@@ -35,6 +35,7 @@ dependencies:
   timeline_tile: ^0.1.0
   path_provider: ^1.6.14
   intl: ^0.16.1 
+  flushbar: ^1.10.4
   percent_indicator: "^2.1.5"
   flutter_staggered_grid_view: ^0.3.2
 dev_dependencies:

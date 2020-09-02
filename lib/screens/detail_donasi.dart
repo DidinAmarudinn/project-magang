@@ -17,10 +17,11 @@ class _DetailDonasiState extends State<DetailDonasi> {
   var namaTabungan;
   bool show = false;
   var _valta = 0;
+  String nominal = "10000";
 
   void updateList() {
     setState(() {
-      _future = dbCelengan.getList();
+      _future = dbCelengan.getListCelengan(int.parse(nominal));
     });
   }
 
@@ -31,6 +32,9 @@ class _DetailDonasiState extends State<DetailDonasi> {
   getList() async {
     await _future.then((value) => list = value);
     setState(() {
+      if (list.length > 0) {
+        namaTabungan = list[0].namaTarget;
+      }
       loading = false;
     });
   }
@@ -106,8 +110,10 @@ class _DetailDonasiState extends State<DetailDonasi> {
                         onSelected: (bool selected) {
                           setState(() {
                             _value = index;
-                            cNominalDonasi.text =
-                                int.parse(chip) == 0 ? "" : chip;
+                            nominal = int.parse(listDonasi[index].nominal) == 0
+                                ? ""
+                                : listDonasi[index].nominal;
+
                             if (_value == 9) {
                               setState(() {
                                 show = true;
@@ -115,6 +121,9 @@ class _DetailDonasiState extends State<DetailDonasi> {
                             } else {
                               setState(() {
                                 show = false;
+                                _future = dbCelengan
+                                    .getListCelengan(int.parse(nominal));
+                                getList();
                               });
                             }
                           });
@@ -139,6 +148,14 @@ class _DetailDonasiState extends State<DetailDonasi> {
                           controller: cNominalDonasi,
                           keyboardType: TextInputType.number,
                           textInputAction: TextInputAction.done,
+                          onChanged: (val) {
+                            setState(() {
+                              nominal = val;
+                              _future =
+                                  dbCelengan.getListCelengan(int.parse(val));
+                              getList();
+                            });
+                          },
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: "nominal donasi",
@@ -192,8 +209,8 @@ class _DetailDonasiState extends State<DetailDonasi> {
                               selected: _valta == index,
                               onSelected: (bool selected) {
                                 setState(() {
-                                  namaTabungan = list[index].namaTarget;
                                   _valta = index;
+                                  namaTabungan = list[index].namaTarget;
                                 });
                               },
                             ),
@@ -210,8 +227,8 @@ class _DetailDonasiState extends State<DetailDonasi> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         onPressed: () {
           setState(() {
-            print("namaTabunga" + namaTabungan);
-            print("nominal" + cNominalDonasi.text);
+            print("nominal" + nominal);
+            print("namaTabungan" + namaTabungan);
           });
         },
         label: Text(

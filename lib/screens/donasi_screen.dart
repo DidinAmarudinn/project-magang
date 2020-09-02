@@ -19,10 +19,15 @@ class _DonasiScreenState extends State<DonasiScreen> {
       content: Text(
         "Ayo beramal, agar allah memudahkan semua keinginan kita, semua relawan penyalur sudah melalui tahap seleksi dari tim YukMangan",
         style: TextStyle(
-            fontSize: 16, color: Colors.black54, fontWeight: FontWeight.w400),
+            height: 1.5,
+            fontSize: 16,
+            color: Colors.black54,
+            fontWeight: FontWeight.w400),
       ),
+      actionsPadding: EdgeInsets.only(right: 8),
       actions: <Widget>[
         RaisedButton(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
           color: ColorsSchema().primaryColors,
           onPressed: () {
             Navigator.pop(context, "saved");

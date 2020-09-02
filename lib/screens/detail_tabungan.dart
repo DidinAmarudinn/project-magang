@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:nabung_beramal/colors/colors_schema.dart';
 import 'package:nabung_beramal/data/celengan_model.dart';
@@ -113,6 +114,32 @@ class _DetailTabunganState extends State<DetailTabungan> {
     db.deleteHarain(widget.celenganModel.id);
   }
 
+  void showFlushbar(BuildContext context) {
+    Flushbar(
+      margin: EdgeInsets.all(16),
+      padding: EdgeInsets.all(10),
+      borderRadius: 8,
+      backgroundColor: ColorsSchema().primaryColors,
+      dismissDirection: FlushbarDismissDirection.HORIZONTAL,
+      duration: Duration(seconds: 3),
+      title: "form tidak boleh kosong",
+      message: "mohon isi nominal dan deskripsi",
+    )..show(context);
+  }
+
+  void showFlushbarDelete(BuildContext context) {
+    Flushbar(
+      margin: EdgeInsets.all(16),
+      padding: EdgeInsets.all(10),
+      borderRadius: 8,
+      backgroundColor: ColorsSchema().primaryColors,
+      dismissDirection: FlushbarDismissDirection.HORIZONTAL,
+      duration: Duration(seconds: 3),
+      title: "Celengan dan Tabungan",
+      message: "berhasil dihapus",
+    )..show(context);
+  }
+
   Future updateRecord() async {
     var db = DbCelengan();
     var dbCelengan = CelenganModel(
@@ -154,6 +181,7 @@ class _DetailTabunganState extends State<DetailTabungan> {
                 context, MaterialPageRoute(builder: (context) => HomePage()));
             _delete(widget.celenganModel);
             _deleteHarian();
+            showFlushbarDelete(context);
           },
           child: Text(
             "Delete",
@@ -286,7 +314,7 @@ class _DetailTabunganState extends State<DetailTabungan> {
             if (cNominalHarian.text.length == 0 &&
                 cDeskHarian.text.length == 0) {
               setState(() {
-                _allret();
+                showFlushbar(context);
               });
             } else {
               setState(() {
