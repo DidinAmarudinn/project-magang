@@ -46,7 +46,7 @@ class _TodaySavedState extends State<TodaySaved> {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-      height: 80,
+      height: 90,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -72,41 +72,46 @@ class _TodaySavedState extends State<TodaySaved> {
           SizedBox(
             width: 20,
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+          Expanded(
+            child: Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Row(
+                    children: [
+                      Text(
+                        "Rp.",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w300),
+                      ),
+                      SizedBox(width: 6),
+                      Text(
+                        _total != null
+                            ? NumberFormat.currency(
+                                    locale: 'id', decimalDigits: 0, symbol: "")
+                                .format(_total)
+                                .toString()
+                            : "0",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
                   Text(
-                    "Rp.",
+                    "tersimpan hari ini",
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 14,
                         fontWeight: FontWeight.w300),
-                  ),
-                  SizedBox(width: 6),
-                  Text(
-                    _total != null
-                        ? NumberFormat.currency(
-                                locale: 'id', decimalDigits: 0, symbol: "")
-                            .format(_total)
-                            .toString()
-                        : "0",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600),
-                  ),
+                  )
                 ],
               ),
-              Text(
-                "tersimpan hari ini",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w300),
-              )
-            ],
+            ),
           ),
         ],
       ),

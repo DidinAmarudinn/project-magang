@@ -26,6 +26,7 @@ class _DetailDonasiState extends State<DetailDonasi> {
   }
 
   bool loading = true;
+  bool disableButton = false;
 
   List<CelenganModel> list;
 
@@ -34,6 +35,11 @@ class _DetailDonasiState extends State<DetailDonasi> {
     setState(() {
       if (list.length > 0) {
         namaTabungan = list[0].namaTarget;
+        disableButton = false;
+      } else {
+        setState(() {
+          disableButton = true;
+        });
       }
       loading = false;
     });
@@ -223,13 +229,18 @@ class _DetailDonasiState extends State<DetailDonasi> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: ColorsSchema().primaryColors,
+        backgroundColor:
+            disableButton ? Colors.grey : ColorsSchema().primaryColors,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         onPressed: () {
-          setState(() {
-            print("nominal" + nominal);
-            print("namaTabungan" + namaTabungan);
-          });
+          if (disableButton) {
+            print("disable");
+          } else {
+            setState(() {
+              print("nominal" + nominal);
+              print("namaTabungan" + namaTabungan);
+            });
+          }
         },
         label: Text(
           "Donasi",

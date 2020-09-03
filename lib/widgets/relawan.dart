@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nabung_beramal/colors/colors_schema.dart';
 import 'package:nabung_beramal/data/relawan_model.dart';
+import 'package:nabung_beramal/screens/detail_donasi.dart';
 
 class Relawan extends StatefulWidget {
   @override
@@ -72,7 +73,12 @@ class _RelawanState extends State<Relawan> {
                           ),
                         ),
                         InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => DetailDonasi()));
+                          },
                           child: Container(
                             height: 40,
                             width: 80,

@@ -111,6 +111,8 @@ class _TambahTabunganState extends State<TambahTabungan> {
       cKategori.text = cele.namaKategori;
       show = true;
       _value = cele.indexKategori;
+    } else {
+      cKategori.text = list[0];
     }
   }
 

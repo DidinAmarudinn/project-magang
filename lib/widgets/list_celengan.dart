@@ -50,7 +50,7 @@ class _ListCelenganState extends State<ListCelengan> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.25,
+      height: 230,
       child: FutureBuilder<List<CelenganModel>>(
         future: future,
         builder: (BuildContext context, snapshot) {
@@ -109,47 +109,53 @@ class _ListCelenganState extends State<ListCelengan> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        child: Text(
-                                          data[index].namaTarget,
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w500),
-                                          maxLines: 2,
-                                        ),
-                                      ),
-                                      SizedBox(height: 4),
-                                      Text(
-                                        "dibuat ${data[index].createDate.substring(0, 9)}",
-                                        style: TextStyle(
-                                            color: Colors.black54,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w300),
-                                      ),
-                                      SizedBox(
-                                        height: 8,
-                                      ),
-                                      Container(
-                                        padding: EdgeInsets.all(6),
-                                        decoration: BoxDecoration(
-                                            color: ColorsSchema().primaryColors,
-                                            borderRadius:
-                                                BorderRadius.circular(4)),
-                                        child: Center(
+                                  Flexible(
+                                    flex: 2,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
                                           child: Text(
-                                            data[index].namaKategori,
+                                            data[index].namaTarget,
                                             style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 12),
+                                                color: Colors.black,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500),
+                                            maxLines: 2,
                                           ),
                                         ),
-                                      )
-                                    ],
+                                        SizedBox(height: 4),
+                                        Text(
+                                          "dibuat ${data[index].createDate.substring(0, 9)}",
+                                          style: TextStyle(
+                                              color: Colors.black54,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w300),
+                                        ),
+                                        SizedBox(
+                                          height: 8,
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.all(6),
+                                          decoration: BoxDecoration(
+                                              color:
+                                                  ColorsSchema().primaryColors,
+                                              borderRadius:
+                                                  BorderRadius.circular(4)),
+                                          child: Center(
+                                            child: Text(
+                                              data[index].namaKategori,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                   ),
                                   Flexible(
                                     flex: 1,
