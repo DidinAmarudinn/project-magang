@@ -65,7 +65,8 @@ class _ListAllCelenganState extends State<ListAllCelengan> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => DetailTabungan(data[index]),
+                            builder: (context) =>
+                                DetailTabungan(data[index], data[index].id),
                           ),
                         );
                         print(data[index].id);

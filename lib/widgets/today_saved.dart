@@ -1,47 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:nabung_beramal/colors/colors_schema.dart';
-import 'package:nabung_beramal/data/celengan_model.dart';
-import 'package:nabung_beramal/helper/db_celengan.dart';
-import 'package:nabung_beramal/helper/db_harian.dart';
 
 class TodaySaved extends StatefulWidget {
+  final int totalToday;
+  TodaySaved(this.totalToday);
   @override
   _TodaySavedState createState() => _TodaySavedState();
 }
 
 class _TodaySavedState extends State<TodaySaved> {
-  var db = DbTabHarain();
-  int _total = 0;
-  List priceList;
-  var now = DateTime.now();
-  void _calcTotal() async {
-    String dateNow = "${now.day}-${now.month}-${now.year}";
-    var result = (await db.calculateTotal(dateNow)).length > 0
-        ? (await db.calculateTotal(dateNow))[0]['total']
-        : 0;
-    print(result);
-    setState(() {
-      _total = result;
-    });
-  }
-
-  Future<List<CelenganModel>> future;
-  var dbc = DbCelengan();
-  updateList() {
-    setState(() {
-      future = dbc.getList();
-      print('dcsd');
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _calcTotal();
-    updateList();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -89,10 +57,10 @@ class _TodaySavedState extends State<TodaySaved> {
                       ),
                       SizedBox(width: 6),
                       Text(
-                        _total != null
+                        widget.totalToday != null
                             ? NumberFormat.currency(
                                     locale: 'id', decimalDigits: 0, symbol: "")
-                                .format(_total)
+                                .format(widget.totalToday)
                                 .toString()
                             : "0",
                         style: TextStyle(

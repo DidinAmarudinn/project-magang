@@ -102,8 +102,8 @@ class DbCelengan {
 
   Future<List<CelenganModel>> getListById(int id) async {
     var dbClient = await db;
-    List<Map> list =
-        await dbClient.rawQuery("SELECT * FROM db_celengan ORDER BY id DESC");
+    List<Map> list = await dbClient
+        .rawQuery("SELECT * FROM db_celengan WHERE id= ?", <int>[id]);
     List<CelenganModel> listData = new List();
     for (int i = 0; i < list.length; i++) {
       var celengan = new CelenganModel(

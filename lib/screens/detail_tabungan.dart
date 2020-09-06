@@ -12,10 +12,12 @@ import 'package:nabung_beramal/screens/homepage.dart';
 import 'package:nabung_beramal/screens/tambah_tabungan.dart';
 import 'package:nabung_beramal/widgets/list_riwayat_tabungan.dart';
 import 'package:nabung_beramal/widgets/statistik.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class DetailTabungan extends StatefulWidget {
   final CelenganModel celenganModel;
-  DetailTabungan(this.celenganModel);
+  final int id;
+  DetailTabungan(this.celenganModel, this.id);
   @override
   _DetailTabunganState createState() => _DetailTabunganState();
 }
@@ -25,6 +27,7 @@ class _DetailTabunganState extends State<DetailTabungan> {
   Future<List<TabunganHarainModel>> _future;
   Future<List<CelenganModel>> _futureCelengan;
   DbCelengan dbCelengan = DbCelengan();
+  List<CelenganModel> list;
   CelenganModel cele;
   int progress;
   int validator;
@@ -47,6 +50,17 @@ class _DetailTabunganState extends State<DetailTabungan> {
       setState(() {
         _future = db.getList(widget.celenganModel.id);
       });
+  }
+
+  void getListById(int id) {
+    setState(() {
+      _futureCelengan = dbCelengan.getListById(id);
+    });
+  }
+
+  void loadData() async {
+    await _futureCelengan.then((value) => list = value);
+    print(list[0].namaTarget);
   }
 
   int _totalProgress = 0;
@@ -85,6 +99,8 @@ class _DetailTabunganState extends State<DetailTabungan> {
     await db.saveData(dbtabHar);
     setState(() {
       _future = db.getList(widget.celenganModel.id);
+      _futureCelengan = dbCelengan.getListById(widget.id);
+      loadData();
     });
     print(dateNowTgl);
   }
@@ -355,7 +371,10 @@ class _DetailTabunganState extends State<DetailTabungan> {
     super.initState();
     updateList();
     _calcTotal();
+
     loadNabung();
+    getListById(widget.id);
+    loadData();
     progres = widget.celenganModel.nominalTarget;
     print(widget.celenganModel.lamaTarget);
   }
@@ -377,8 +396,7 @@ class _DetailTabunganState extends State<DetailTabungan> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        await Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => HomePage()));
+        Navigator.pop(context, "back");
         return true;
       },
       child: Scaffold(
@@ -390,8 +408,7 @@ class _DetailTabunganState extends State<DetailTabungan> {
                 color: Colors.black,
               ),
               onPressed: () {
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => HomePage()));
+                Navigator.pop(context, "back");
               }),
           elevation: 0,
           actions: [
@@ -466,7 +483,10 @@ class _DetailTabunganState extends State<DetailTabungan> {
                   SizedBox(
                     height: 12,
                   ),
-                  Statistik(_totalProgress, widget.celenganModel.nominalTarget)
+                  list != null
+                      ? Statistik(list.length > 0 ? list[0].progress : 0,
+                          list.length > 0 ? list[0].nominalTarget : 0)
+                      : Center(child: CircularProgressIndicator())
                 ],
               ),
             ),
