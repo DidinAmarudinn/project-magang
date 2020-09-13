@@ -2,34 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sparkline/flutter_sparkline.dart';
 import 'package:nabung_beramal/colors/colors_schema.dart';
 import 'package:nabung_beramal/widgets/circle_progres.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class Statistik extends StatefulWidget {
+  final List<double> statistik;
   final int progress;
   final int target;
-  Statistik(this.progress, this.target);
+  Statistik(this.progress, this.target, this.statistik);
   @override
   _StatistikState createState() => _StatistikState();
 }
 
 class _StatistikState extends State<Statistik> {
-  var data = [
-    0.0,
-    10000.0,
-    15000.0,
-    12000.0,
-    20000.0,
-    10000.0,
-    10000.0,
-    20000.0,
-    30000.0,
-    20000.0,
-    10000.0,
-    20000.0
-  ];
-
+  var data;
+  bool load;
   @override
   void initState() {
     super.initState();
+    data = widget.statistik;
+    if (widget.statistik != null) {
+      setState(() {
+        load = false;
+      });
+    } else {
+      setState(() {
+        load = true;
+      });
+    }
   }
 
   @override
@@ -65,23 +64,29 @@ class _StatistikState extends State<Statistik> {
               SizedBox(
                 height: 12,
               ),
-              Container(
-                height: 150,
-                width: MediaQuery.of(context).size.width,
-                child: Sparkline(
-                  data: data,
-                  lineColor: ColorsSchema().primaryColors,
-                  pointsMode: PointsMode.all,
-                  lineWidth: 2,
-                  pointSize: 6,
-                  fillMode: FillMode.below,
-                  pointColor: ColorsSchema().primaryColors,
-                  fillGradient: LinearGradient(
-                      colors: [ColorsSchema().accentColors1, Colors.white],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter),
-                ),
-              ),
+              load
+                  ? Container(
+                      height: 150,
+                      width: MediaQuery.of(context).size.width,
+                      child: Center(child: Text("Belum ada chart")))
+                  : Container(
+                      height: 150,
+                      width: MediaQuery.of(context).size.width,
+                      child: Sparkline(
+                        data: data,
+                        lineColor: ColorsSchema().primaryColors,
+                        pointsMode: PointsMode.none,
+                        lineWidth: 2,
+                        fillMode: FillMode.below,
+                        fillGradient: LinearGradient(
+                            colors: [
+                              ColorsSchema().accentColors1,
+                              Colors.white
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter),
+                      ),
+                    ),
             ],
           ),
           Container(

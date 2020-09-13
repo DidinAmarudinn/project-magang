@@ -96,4 +96,24 @@ class DbTabHarain {
         <int>[id]);
     return result;
   }
+
+  Future<int> deleteAll() async {
+    var dbClient = await db;
+    int res = await dbClient.rawDelete("DELETE FROM db_harian");
+    print("all data harian deleted");
+    return res;
+  }
+
+  Future<List<int>> getAllNominalHarian(int id) async {
+    var dbClient = await db;
+    List<int> dddd = [];
+    List<Map> res = await dbClient.rawQuery(
+        'SELECT nominal as tabungan FROM db_harian WHERE foriegnCelengan= ?',
+        <int>[id]);
+    List<int> list = new List();
+    for (int i = 0; i < res.length; i++) {
+      list.add(res[i]['tabungan']);
+    }
+    return list;
+  }
 }

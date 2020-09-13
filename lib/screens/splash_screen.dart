@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:nabung_beramal/colors/colors_schema.dart';
-import 'package:nabung_beramal/screens/homepage.dart';
+import 'package:nabung_beramal/screens/home_page.dart';
+import 'package:nabung_beramal/screens/dashboard.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -28,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   route() {
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => HomePage()));
+        context, MaterialPageRoute(builder: (context) => Home()));
   }
 
   initScreen(BuildContext context) {

@@ -4,6 +4,7 @@ import 'package:nabung_beramal/colors/colors_schema.dart';
 import 'package:nabung_beramal/data/celengan_model.dart';
 import 'package:nabung_beramal/data/data_nominal_donasi.dart';
 import 'package:nabung_beramal/helper/db_celengan.dart';
+import 'package:nabung_beramal/screens/confirm_donasi.dart';
 
 class DetailDonasi extends StatefulWidget {
   @override
@@ -15,9 +16,11 @@ class _DetailDonasiState extends State<DetailDonasi> {
   Future<List<CelenganModel>> _future;
   final cNominalDonasi = TextEditingController();
   var namaTabungan;
+  int idCelengan;
   bool show = false;
   var _valta = 0;
   String nominal = "10000";
+  CelenganModel celenganModel;
 
   void updateList() {
     setState(() {
@@ -35,6 +38,8 @@ class _DetailDonasiState extends State<DetailDonasi> {
     setState(() {
       if (list.length > 0) {
         namaTabungan = list[0].namaTarget;
+        idCelengan = list[0].id;
+        celenganModel = list[0];
         disableButton = false;
       } else {
         setState(() {
@@ -237,6 +242,11 @@ class _DetailDonasiState extends State<DetailDonasi> {
             print("disable");
           } else {
             setState(() {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ConfirmDonasi(
+                          int.parse(nominal), idCelengan, celenganModel)));
               print("nominal" + nominal);
               print("namaTabungan" + namaTabungan);
             });

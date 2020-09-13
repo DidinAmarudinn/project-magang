@@ -2,17 +2,19 @@ import 'dart:math';
 
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:intl/intl.dart';
 import 'package:nabung_beramal/colors/colors_schema.dart';
 import 'package:nabung_beramal/data/celengan_model.dart';
 import 'package:nabung_beramal/data/menu_content.dart';
 import 'package:nabung_beramal/data/tabungan_harian_model.dart';
 import 'package:nabung_beramal/helper/db_celengan.dart';
 import 'package:nabung_beramal/helper/db_harian.dart';
-import 'package:nabung_beramal/screens/homepage.dart';
+import 'package:nabung_beramal/main.dart';
+import 'package:nabung_beramal/screens/home_page.dart';
 import 'package:nabung_beramal/screens/tambah_tabungan.dart';
 import 'package:nabung_beramal/widgets/list_riwayat_tabungan.dart';
 import 'package:nabung_beramal/widgets/statistik.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class DetailTabungan extends StatefulWidget {
   final CelenganModel celenganModel;
@@ -26,8 +28,11 @@ class _DetailTabunganState extends State<DetailTabungan> {
   TextEditingController cNominalHarian = TextEditingController();
   Future<List<TabunganHarainModel>> _future;
   Future<List<CelenganModel>> _futureCelengan;
+  Future<List<int>> _futurelistData;
   DbCelengan dbCelengan = DbCelengan();
   List<CelenganModel> list;
+  List<double> statistik = [];
+  List<int> coba = [];
   CelenganModel cele;
   int progress;
   int validator;
@@ -60,7 +65,27 @@ class _DetailTabunganState extends State<DetailTabungan> {
 
   void loadData() async {
     await _futureCelengan.then((value) => list = value);
-    print(list[0].namaTarget);
+  }
+
+  void getListNominal(int id) async {
+    setState(() {
+      _futurelistData = db.getAllNominalHarian(id);
+    });
+  }
+
+  void loadDataStat() async {
+    await _futurelistData.then((value) {
+      setState(() {
+        coba = value;
+        print(coba.toString() + "ccccccccccc");
+      });
+    });
+    setState(() {
+      List<double> _list = coba.map((e) => e.toDouble()).toList();
+      _list.insert(0, 0.0);
+      statistik = _list;
+      print(statistik);
+    });
   }
 
   int _totalProgress = 0;
@@ -100,9 +125,30 @@ class _DetailTabunganState extends State<DetailTabungan> {
     setState(() {
       _future = db.getList(widget.celenganModel.id);
       _futureCelengan = dbCelengan.getListById(widget.id);
+      _futurelistData = db.getAllNominalHarian(widget.id);
+      loadDataStat();
       loadData();
     });
     print(dateNowTgl);
+  }
+
+  Future updatePengingat() async {
+    var db = DbCelengan();
+    var dbCelengan = CelenganModel(
+        widget.celenganModel.namaTarget,
+        int.parse(widget.celenganModel.nominalTarget.toString()),
+        widget.celenganModel.deskrpsi,
+        widget.celenganModel.lamaTarget,
+        widget.celenganModel.createDate,
+        widget.celenganModel.namaKategori,
+        widget.celenganModel.progress,
+        widget.celenganModel.indexKategori,
+        widget.celenganModel.pengingat,
+        _alarmTime.toString());
+    dbCelengan.setId(widget.celenganModel.id);
+
+    await db.upadteData(dbCelengan);
+    print("updated pengingat");
   }
 
   void updateList() async {
@@ -156,6 +202,91 @@ class _DetailTabunganState extends State<DetailTabungan> {
     )..show(context);
   }
 
+  DateTime _alarmTime;
+  String _alarmTimeString;
+  void aturPengingat() async {
+    _alarmTimeString = DateFormat('HH:mm').format(DateTime.now());
+    showModalBottomSheet(
+        useRootNavigator: true,
+        clipBehavior: Clip.antiAlias,
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(24),
+          ),
+        ),
+        builder: (context) {
+          return StatefulBuilder(
+            builder: (context, setModalState) {
+              return Container(
+                height: 180,
+                padding: EdgeInsets.all(24),
+                child: Column(
+                  children: [
+                    FlatButton(
+                      onPressed: () async {
+                        var selectedTime = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                        );
+                        if (selectedTime != null) {
+                          final now = DateTime.now();
+                          var selectedDateTime = DateTime(
+                            now.year,
+                            now.month,
+                            now.day,
+                            selectedTime.hour,
+                            selectedTime.minute,
+                          );
+                          _alarmTime = selectedDateTime;
+                          setModalState(
+                            () {
+                              _alarmTimeString = DateFormat('dd-MM HH:mm')
+                                  .format(selectedDateTime);
+                            },
+                          );
+                        }
+                      },
+                      child: Center(
+                        child: Text(
+                          _alarmTimeString,
+                          style: TextStyle(fontSize: 32),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 12,
+                    ),
+                    FloatingActionButton.extended(
+                      backgroundColor: ColorsSchema().primaryColors,
+                      onPressed: () async {
+                        DateTime scheduleAlarmDateTime = _alarmTime;
+                        if (_alarmTime.isAfter(DateTime.now()))
+                          scheduleAlarmDateTime =
+                              _alarmTime.add(Duration(seconds: 10));
+                        else
+                          scheduleAlarmDateTime =
+                              _alarmTime.add(Duration(days: 1));
+                        print(scheduleAlarmDateTime);
+                        updatePengingat();
+                        scheduleAlarm(
+                            widget.celenganModel.namaTarget,
+                            widget.celenganModel.progress.toString() +
+                                " dari " +
+                                widget.celenganModel.nominalTarget.toString(),
+                            scheduleAlarmDateTime);
+                      },
+                      label: Text("save"),
+                      icon: Icon(Icons.alarm),
+                    )
+                  ],
+                ),
+              );
+            },
+          );
+        });
+  }
+
   Future updateRecord() async {
     var db = DbCelengan();
     var dbCelengan = CelenganModel(
@@ -173,13 +304,14 @@ class _DetailTabunganState extends State<DetailTabungan> {
                 ? progres
                 : _totalProgress + int.parse(cNominalHarian.text),
         widget.celenganModel.indexKategori,
-        widget.celenganModel.pengingat);
+        widget.celenganModel.pengingat,
+        DateTime.parse(widget.celenganModel.alarmDateTime)
+            .add(Duration(days: 1))
+            .toString());
     dbCelengan.setId(widget.celenganModel.id);
     await db.upadteData(dbCelengan);
     addRecordData();
   }
-
-  void aturPeningat() {}
 
   void _confirmDelete() {
     AlertDialog alertDialog = AlertDialog(
@@ -194,7 +326,7 @@ class _DetailTabunganState extends State<DetailTabungan> {
           color: Colors.grey,
           onPressed: () async {
             Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => HomePage()));
+                context, MaterialPageRoute(builder: (context) => Home()));
             _delete(widget.celenganModel);
             _deleteHarian();
             showFlushbarDelete(context);
@@ -335,7 +467,12 @@ class _DetailTabunganState extends State<DetailTabungan> {
             } else {
               setState(() {
                 saveData();
-                _future = db.getList(widget.celenganModel.id);
+                scheduleAlarm(
+                    widget.celenganModel.namaTarget,
+                    widget.celenganModel.progress.toString() +
+                        " dari " +
+                        widget.celenganModel.nominalTarget.toString(),
+                    DateTime.parse(widget.celenganModel.alarmDateTime));
                 _futureCelengan = dbCelengan.getList();
               });
             }
@@ -370,10 +507,12 @@ class _DetailTabunganState extends State<DetailTabungan> {
   void initState() {
     super.initState();
     updateList();
-    _calcTotal();
-
+    _alarmTime = DateTime.now();
     loadNabung();
     getListById(widget.id);
+    _calcTotal();
+    getListNominal(widget.id);
+    loadDataStat();
     loadData();
     progres = widget.celenganModel.nominalTarget;
     print(widget.celenganModel.lamaTarget);
@@ -423,7 +562,9 @@ class _DetailTabunganState extends State<DetailTabungan> {
                                 TambahTabungan(widget.celenganModel, false)));
                   } else if (val == "Delete") {
                     _confirmDelete();
-                  } else {}
+                  } else {
+                    aturPengingat();
+                  }
                 },
                 icon: Icon(
                   Icons.more_vert,
@@ -483,9 +624,11 @@ class _DetailTabunganState extends State<DetailTabungan> {
                   SizedBox(
                     height: 12,
                   ),
-                  list != null
-                      ? Statistik(list.length > 0 ? list[0].progress : 0,
-                          list.length > 0 ? list[0].nominalTarget : 0)
+                  list != null && statistik != null && coba.length != null
+                      ? Statistik(
+                          list.length > 0 ? list[0].progress : 0,
+                          list.length > 0 ? list[0].nominalTarget : 0,
+                          coba.length == 0 ? null : statistik)
                       : Center(child: CircularProgressIndicator())
                 ],
               ),
@@ -512,5 +655,27 @@ class _DetailTabunganState extends State<DetailTabungan> {
         ),
       ),
     );
+  }
+
+  void scheduleAlarm(String title, String body, DateTime dateTime) async {
+    var scheduleNotificationDateTime = dateTime.add(Duration(seconds: 10));
+
+    var androidPlatformChanelSpesific = AndroidNotificationDetails(
+      'alarm_notif',
+      'alarm_notif',
+      'Channel for alarm notif',
+      icon: 'app_icon',
+      sound: RawResourceAndroidNotificationSound('a_long_cold_sting'),
+      largeIcon: DrawableResourceAndroidBitmap('app_icon'),
+    );
+    var iosPlatfromChanelSpesifics = IOSNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+    var platfromChannelSpesific = NotificationDetails(
+        androidPlatformChanelSpesific, iosPlatfromChanelSpesifics);
+    await flutterLocalNotificationsPlugin.schedule(
+        0, title, body, scheduleNotificationDateTime, platfromChannelSpesific);
   }
 }

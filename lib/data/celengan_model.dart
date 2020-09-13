@@ -3,6 +3,7 @@ class CelenganModel {
   String _namaTarget;
   int _nominalTarget;
   String _createDate;
+  String _alarmDateTime;
   String _namaKategori;
   String _deskripsi;
   int _progreess;
@@ -19,7 +20,8 @@ class CelenganModel {
       this._namaKategori,
       this._progreess,
       this._indexKategori,
-      this._pengingat);
+      this._pengingat,
+      this._alarmDateTime);
 
   CelenganModel.map(dynamic object) {
     this._namaTarget = object['namaTarget'];
@@ -31,6 +33,7 @@ class CelenganModel {
     this._lamaTarget = object['lamaTarget'];
     this._indexKategori = object['indexKategori'];
     this._pengingat = object['pengingat'];
+    this._alarmDateTime = object['alarmDateTime'];
   }
 
   String get namaTarget => _namaTarget;
@@ -42,6 +45,7 @@ class CelenganModel {
   int get lamaTarget => _lamaTarget;
   int get indexKategori => _indexKategori;
   int get pengingat => _pengingat;
+  String get alarmDateTime => _alarmDateTime;
 
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
@@ -54,6 +58,7 @@ class CelenganModel {
     map['lamaTarget'] = _lamaTarget;
     map['indexKategori'] = _indexKategori;
     map['pengingat'] = _pengingat;
+    map['alarmDateTime'] = _alarmDateTime;
     return map;
   }
 

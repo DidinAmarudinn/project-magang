@@ -4,7 +4,8 @@ import 'package:nabung_beramal/colors/colors_schema.dart';
 import 'package:nabung_beramal/data/celengan_model.dart';
 import 'package:nabung_beramal/data/data_kategori.dart';
 import 'package:nabung_beramal/helper/db_celengan.dart';
-import 'package:nabung_beramal/screens/homepage.dart';
+import 'package:nabung_beramal/screens/home_page.dart';
+import 'package:nabung_beramal/screens/dashboard.dart';
 
 class TambahTabungan extends StatefulWidget {
   final CelenganModel celenganModel;
@@ -42,8 +43,8 @@ class _TambahTabunganState extends State<TambahTabungan> {
     } else {
       updateRecord();
     }
-    Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (BuildContext context) => HomePage()));
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (BuildContext context) => Home()));
   }
 
   int progress = 0;
@@ -60,7 +61,8 @@ class _TambahTabunganState extends State<TambahTabungan> {
         cKategori.text,
         progress,
         _value,
-        0);
+        0,
+        now.add(Duration(days: 1)).toString());
     await db.saveData(dbCelengan);
     print("Saved");
   }
@@ -91,7 +93,8 @@ class _TambahTabunganState extends State<TambahTabungan> {
         cKategori.text,
         widget.celenganModel.progress,
         _value,
-        1);
+        1,
+        now.add(Duration(days: 1)).toString());
     dbCelengan.setId(this.cele.id);
     await db.upadteData(dbCelengan);
     setState(() {});

@@ -138,34 +138,6 @@ class _ListAllCelenganState extends State<ListAllCelengan> {
                                       )
                                     ],
                                   ),
-                                  Flexible(
-                                    flex: 1,
-                                    child: Column(
-                                      children: [
-                                        Switch(
-                                            activeColor:
-                                                ColorsSchema().primaryColors,
-                                            inactiveTrackColor: Colors.grey,
-                                            value: val,
-                                            onChanged: (bool value) {
-                                              setState(() {
-                                                val = value;
-                                              });
-                                            }),
-                                        Flexible(
-                                          child: Container(
-                                            child: Text(
-                                              "Pengingat",
-                                              style: TextStyle(
-                                                  color: Colors.black54,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w300),
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  )
                                 ],
                               ),
                             ),

@@ -29,7 +29,7 @@ class DbCelengan {
 
   void _onCreate(Database database, int version) async {
     await database.execute(
-        "CREATE TABLE db_celengan(id INTEGER PRIMARY KEY, namaTarget TEXT, nominalTarget INTEGER, createDate TEXT, namaKategori TEXT, deskripsi TEXT, lamaTarget INTEGER, progress INTEGER, indexKategori INTEGER, pengingat INTEGER)");
+        "CREATE TABLE db_celengan(id INTEGER PRIMARY KEY, namaTarget TEXT, nominalTarget INTEGER, createDate TEXT, namaKategori TEXT, deskripsi TEXT, lamaTarget INTEGER, progress INTEGER, indexKategori INTEGER, pengingat INTEGER,alarmDateTime TEXT)");
     print("dbCelengan created");
   }
 
@@ -55,7 +55,9 @@ class DbCelengan {
           list[i]["namaKategori"],
           list[i]['progress'],
           list[i]['indexKategori'],
-          list[i]['pengingat']);
+          list[i]['pengingat'],
+          list[i]['alarmDateTime']);
+
       celengan.setId(list[i]['id']);
 
       listData.add(celengan);
@@ -85,7 +87,8 @@ class DbCelengan {
           list[i]["namaKategori"],
           list[i]['progress'],
           list[i]['indexKategori'],
-          list[i]['pengingat']);
+          list[i]['pengingat'],
+          list[i]['alarmDateTime']);
       celengan.setId(list[i]['id']);
 
       listData.add(celengan);
@@ -115,11 +118,19 @@ class DbCelengan {
           list[i]["namaKategori"],
           list[i]['progress'],
           list[i]['indexKategori'],
-          list[i]['pengingat']);
+          list[i]['pengingat'],
+          list[i]['alarmDateTime']);
       celengan.setId(list[i]['id']);
 
       listData.add(celengan);
     }
     return listData;
+  }
+
+  Future<int> deleteAllData() async {
+    var dbClient = await db;
+    int res = await dbClient.rawDelete("DELETE FROM db_celengan");
+    print("all data celengan deleted");
+    return res;
   }
 }
