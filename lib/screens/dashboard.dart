@@ -1,4 +1,5 @@
 import 'package:dotted_border/dotted_border.dart';
+import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:nabung_beramal/colors/colors_schema.dart';
@@ -12,6 +13,7 @@ import 'package:nabung_beramal/screens/tambah_tabungan.dart';
 import 'package:nabung_beramal/widgets/donasi_container.dart';
 import 'package:nabung_beramal/widgets/today_saved.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Dashboard extends StatefulWidget {
   @override
@@ -19,6 +21,7 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  DateTime currentBackPressTime;
   var db = DbTabHarain();
   var dbc = DbCelengan();
   var val;
@@ -82,526 +85,587 @@ class _DashboardState extends State<Dashboard> {
           scaleFactor = 1;
         });
       },
-      child: AnimatedContainer(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-            color: ColorsSchema().backgroundColors,
-            borderRadius: isOpen
-                ? BorderRadius.only(
-                    topLeft: Radius.circular(40),
-                    bottomLeft: Radius.circular(0))
-                : BorderRadius.circular(0)),
-        transform: Matrix4.translationValues(xOffset, yOffset, 0)
-          ..scale(scaleFactor),
-        duration: Duration(milliseconds: 250),
-        child: ListView(
-          physics: ClampingScrollPhysics(),
-          padding: EdgeInsets.only(
-              left: 16, right: 16, bottom: 20, top: isOpen ? 12 : 50),
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    isOpen
-                        ? GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                xOffset = 0;
-                                yOffset = 0;
-                                isOpen = false;
-                                scaleFactor = 1;
-                              });
-                            },
-                            child: Container(
-                              height: 50,
-                              width: 50,
-                              decoration: BoxDecoration(
-                                  color: ColorsSchema().primaryColors,
-                                  borderRadius: BorderRadius.circular(25)),
-                              child: Center(
-                                child: Icon(
-                                  Icons.arrow_back_ios,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          )
-                        : IconButton(
-                            padding: EdgeInsets.zero,
-                            constraints: BoxConstraints(),
-                            icon: Icon(
-                              Icons.menu,
-                              color: Colors.black,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                xOffset = 200;
-                                yOffset = 150;
-                                scaleFactor = 0.6;
-                                isOpen = true;
-                              });
-                            },
-                          ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => BeliCelengan()));
-                      },
-                      child: Image.asset(
-                        "images/outline_shop.png",
-                        scale: 1,
-                      ),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 24,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          "Rp",
-                          style: TextStyle(
-                              color: Colors.black54,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w300),
-                        ),
-                        SizedBox(
-                          width: 6,
-                        ),
-                        Text(
-                          _total != null
-                              ? NumberFormat.currency(
-                                      locale: 'id',
-                                      symbol: '',
-                                      decimalDigits: 0)
-                                  .format(_total)
-                                  .toString()
-                              : "0",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 6,
-                    ),
-                    Text(
-                      "Total uang tabungan",
-                      style: TextStyle(
-                          color: Colors.black54,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w300),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 50,
-                ),
-                TodaySaved(_totalToday),
-                SizedBox(
-                  height: 20,
-                ),
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      child: DoubleBackToCloseApp(
+        snackBar: const SnackBar(
+          backgroundColor: Colors.black,
+          duration: Duration(milliseconds: 1200),
+          content: Text('Tekan dua kali untuk keluar'),
+        ),
+        child: AnimatedContainer(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+              color: ColorsSchema().backgroundColors,
+              borderRadius: isOpen
+                  ? BorderRadius.only(
+                      topLeft: Radius.circular(40),
+                      bottomLeft: Radius.circular(0))
+                  : BorderRadius.circular(0)),
+          transform: Matrix4.translationValues(xOffset, yOffset, 0)
+            ..scale(scaleFactor),
+          duration: Duration(milliseconds: 250),
+          child: ListView(
+            physics: ClampingScrollPhysics(),
+            padding: EdgeInsets.only(
+                left: 16, right: 16, bottom: 20, top: isOpen ? 12 : 50),
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        "Daftar Tabungan",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600),
-                      ),
+                      isOpen
+                          ? GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  xOffset = 0;
+                                  yOffset = 0;
+                                  isOpen = false;
+                                  scaleFactor = 1;
+                                });
+                              },
+                              child: Container(
+                                height: 50,
+                                width: 50,
+                                decoration: BoxDecoration(
+                                    color: ColorsSchema().primaryColors,
+                                    borderRadius: BorderRadius.circular(25)),
+                                child: Center(
+                                  child: Icon(
+                                    Icons.arrow_back_ios,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            )
+                          : IconButton(
+                              padding: EdgeInsets.zero,
+                              constraints: BoxConstraints(),
+                              icon: Icon(
+                                Icons.menu,
+                                color: Colors.black,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  xOffset = 200;
+                                  yOffset = 150;
+                                  scaleFactor = 0.6;
+                                  isOpen = true;
+                                });
+                              },
+                            ),
                       GestureDetector(
                         onTap: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ListAllCelengan()));
+                                  builder: (context) => BeliCelengan()));
                         },
-                        child: Text(
-                          "Lihat Semua",
-                          style: TextStyle(color: Colors.black54, fontSize: 16),
+                        child: Image.asset(
+                          "images/outline_shop.png",
+                          scale: 1,
                         ),
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    height: 24,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            "Rp",
+                            style: TextStyle(
+                                color: Colors.black54,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w300),
+                          ),
+                          SizedBox(
+                            width: 6,
+                          ),
+                          Text(
+                            _total != null
+                                ? NumberFormat.currency(
+                                        locale: 'id',
+                                        symbol: '',
+                                        decimalDigits: 0)
+                                    .format(_total)
+                                    .toString()
+                                : "0",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 6,
+                      ),
+                      Text(
+                        "Total uang tabungan",
+                        style: TextStyle(
+                            color: Colors.black54,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w300),
                       ),
                     ],
                   ),
                   SizedBox(
-                    height: 16,
+                    height: 50,
                   ),
-                  DottedBorder(
-                    strokeWidth: 2,
-                    dashPattern: [5, 4],
-                    color: ColorsSchema().secondColors,
-                    borderType: BorderType.RRect,
-                    radius: Radius.circular(12),
-                    child: Container(
-                      height: 80,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: FlatButton(
-                        splashColor: ColorsSchema().primaryColors,
-                        padding: EdgeInsets.symmetric(vertical: 10),
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      TambahTabungan(null, true)));
-                        },
-                        child: Column(
+                  TodaySaved(_totalToday),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Expanded(
-                              child: Image.asset(
-                                "images/add_walet.png",
-                                width: 50,
-                                height: 50,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
                             Text(
-                              "Buat Tabungan",
+                              "Daftar Tabungan",
                               style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black,
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ListAllCelengan()));
+                              },
+                              child: Text(
+                                "Lihat Semua",
+                                style: TextStyle(
+                                    color: Colors.black54, fontSize: 16),
                               ),
-                            )
+                            ),
                           ],
                         ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: 230,
-                    child: FutureBuilder<List<CelenganModel>>(
-                      future: future,
-                      builder: (BuildContext context, snapshot) {
-                        var data = snapshot.data;
-                        if (snapshot.connectionState != ConnectionState.done) {
-                          return Text('loading');
-                        }
-                        return snapshot.hasData && snapshot.data.length > 0
-                            ? ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 20, horizontal: 0),
-                                itemCount: data.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return GestureDetector(
-                                    onTap: () async {
-                                      final result = await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => DetailTabungan(
-                                              data[index], data[index].id),
-                                        ),
-                                      );
-                                      if (result != null) {
-                                        setState(() {
-                                          updateList();
-                                          _calcTotal();
-                                          _calcTotalToday();
-                                        });
-                                      }
-                                      print(data[index].id);
-                                    },
-                                    child: Container(
-                                      margin: index == 0
-                                          ? EdgeInsets.only(left: 0)
-                                          : EdgeInsets.only(left: 12),
+                        SizedBox(
+                          height: 16,
+                        ),
+                        DottedBorder(
+                          strokeWidth: 2,
+                          dashPattern: [5, 4],
+                          color: ColorsSchema().secondColors,
+                          borderType: BorderType.RRect,
+                          radius: Radius.circular(12),
+                          child: Container(
+                            height: 80,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: FlatButton(
+                              splashColor: ColorsSchema().primaryColors,
+                              padding: EdgeInsets.symmetric(vertical: 10),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            TambahTabungan(null, true)));
+                              },
+                              child: Column(
+                                children: [
+                                  Expanded(
+                                    child: Image.asset(
+                                      "images/add_walet.png",
+                                      width: 50,
+                                      height: 50,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 8,
+                                  ),
+                                  Text(
+                                    "Buat Tabungan",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.black,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: 230,
+                          child: FutureBuilder<List<CelenganModel>>(
+                            future: future,
+                            builder: (BuildContext context, snapshot) {
+                              var data = snapshot.data;
+                              if (snapshot.connectionState !=
+                                  ConnectionState.done) {
+                                return Text('loading');
+                              }
+                              return snapshot.hasData &&
+                                      snapshot.data.length > 0
+                                  ? ListView.builder(
+                                      scrollDirection: Axis.horizontal,
                                       padding: EdgeInsets.symmetric(
-                                          vertical: 12, horizontal: 12),
-                                      height: 150,
-                                      width: MediaQuery.of(context).size.width *
-                                          0.55,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(15),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color:
-                                                Colors.black.withOpacity(.06),
-                                            offset: Offset(0, 4),
-                                            blurRadius: 2,
-                                          ),
-                                        ],
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          Flexible(
-                                            flex: 1,
-                                            child: Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                          vertical: 20, horizontal: 0),
+                                      itemCount: data.length,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return GestureDetector(
+                                          onTap: () async {
+                                            final result = await Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    DetailTabungan(data[index],
+                                                        data[index].id),
+                                              ),
+                                            );
+                                            if (result != null) {
+                                              setState(() {
+                                                updateList();
+                                                _calcTotal();
+                                                _calcTotalToday();
+                                              });
+                                            }
+                                            print(data[index].id);
+                                          },
+                                          child: Container(
+                                            margin: index == 0
+                                                ? EdgeInsets.only(left: 0)
+                                                : EdgeInsets.only(left: 12),
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 12, horizontal: 12),
+                                            height: 150,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.55,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(15),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black
+                                                      .withOpacity(.06),
+                                                  offset: Offset(0, 4),
+                                                  blurRadius: 2,
+                                                ),
+                                              ],
+                                            ),
+                                            child: Column(
                                               children: [
+                                                Flexible(
+                                                  flex: 1,
+                                                  child: Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Container(
+                                                            child: Text(
+                                                              data[index]
+                                                                  .namaTarget,
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontSize: 16,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500),
+                                                              maxLines: 2,
+                                                            ),
+                                                          ),
+                                                          SizedBox(height: 4),
+                                                          Text(
+                                                            "dibuat ${data[index].createDate.substring(0, 9)}",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .black54,
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w300),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 8,
+                                                          ),
+                                                          Container(
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                                    6),
+                                                            decoration: BoxDecoration(
+                                                                color: ColorsSchema()
+                                                                    .primaryColors,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            4)),
+                                                            child: Center(
+                                                              child: Text(
+                                                                data[index]
+                                                                    .namaKategori,
+                                                                maxLines: 1,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontSize:
+                                                                        12),
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                      Container(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.15,
+                                                        height: 30,
+                                                        padding:
+                                                            EdgeInsets.all(6),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: ColorsSchema()
+                                                              .primaryColors,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(5),
+                                                        ),
+                                                        child: Center(
+                                                          child: Text(
+                                                            "+ " +
+                                                                data[index]
+                                                                    .progressTerakhir
+                                                                    .toString(),
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize: 12),
+                                                            maxLines: 1,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                          ),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                                Text(
+                                                  "Rp. " +
+                                                      NumberFormat.currency(
+                                                              locale: 'id',
+                                                              symbol: '',
+                                                              decimalDigits: 0)
+                                                          .format(data[index]
+                                                                  .nominalTarget /
+                                                              data[index]
+                                                                  .lamaTarget)
+                                                          .toString() +
+                                                      "/hari",
+                                                  style: TextStyle(
+                                                      color: Colors.black54,
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                                ),
+                                                SizedBox(
+                                                  height: 12,
+                                                ),
                                                 Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     Container(
-                                                      child: Text(
-                                                        data[index].namaTarget,
-                                                        style: TextStyle(
-                                                            color: Colors.black,
-                                                            fontSize: 16,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w500),
-                                                        maxLines: 2,
+                                                      child:
+                                                          LinearPercentIndicator(
+                                                        linearGradient:
+                                                            LinearGradient(
+                                                                colors: [
+                                                              Color(0xFF6448FE),
+                                                              Color(0xFF5FC6FF),
+                                                            ]),
+                                                        alignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        lineHeight: 20.0,
+                                                        percent: data[index]
+                                                                    .progress !=
+                                                                null
+                                                            ? (data[index]
+                                                                    .progress /
+                                                                data[index]
+                                                                    .nominalTarget)
+                                                            : 0.0,
+                                                        animationDuration: 2500,
+                                                        animation: true,
+                                                        center: data[index]
+                                                                    .progress !=
+                                                                null
+                                                            ? Text(
+                                                                ((data[index].progress / data[index].nominalTarget) *
+                                                                            100)
+                                                                        .toString()
+                                                                        .substring(
+                                                                            0,
+                                                                            data[index].progress != 0
+                                                                                ? 3
+                                                                                : 0) +
+                                                                    " %",
+                                                                style: new TextStyle(
+                                                                    fontSize:
+                                                                        12.0,
+                                                                    color: Colors
+                                                                        .white),
+                                                              )
+                                                            : Text(
+                                                                "0",
+                                                                style: new TextStyle(
+                                                                    fontSize:
+                                                                        12.0,
+                                                                    color: Colors
+                                                                        .white),
+                                                              ),
+                                                        linearStrokeCap:
+                                                            LinearStrokeCap
+                                                                .roundAll,
+                                                        backgroundColor:
+                                                            Colors.grey,
                                                       ),
-                                                    ),
-                                                    SizedBox(height: 4),
-                                                    Text(
-                                                      "dibuat ${data[index].createDate.substring(0, 9)}",
-                                                      style: TextStyle(
-                                                          color: Colors.black54,
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.w300),
                                                     ),
                                                     SizedBox(
-                                                      height: 8,
+                                                      height: 6,
                                                     ),
-                                                    Container(
-                                                      padding:
-                                                          EdgeInsets.all(6),
-                                                      decoration: BoxDecoration(
-                                                          color: ColorsSchema()
-                                                              .primaryColors,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(4)),
-                                                      child: Center(
-                                                        child: Text(
-                                                          data[index]
-                                                              .namaKategori,
-                                                          maxLines: 1,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          NumberFormat.currency(
+                                                                      locale:
+                                                                          'id',
+                                                                      symbol:
+                                                                          'Rp ',
+                                                                      decimalDigits:
+                                                                          0)
+                                                                  .format(data[
+                                                                          index]
+                                                                      .progress) +
+                                                              " dari " +
+                                                              NumberFormat.currency(
+                                                                      locale:
+                                                                          'id',
+                                                                      symbol:
+                                                                          'Rp',
+                                                                      decimalDigits:
+                                                                          0)
+                                                                  .format(data[
+                                                                          index]
+                                                                      .nominalTarget),
                                                           style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontSize: 12),
+                                                              color: Colors
+                                                                  .black54,
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w300),
                                                         ),
-                                                      ),
+                                                      ],
                                                     )
                                                   ],
-                                                ),
-                                                Container(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.15,
-                                                  height: 30,
-                                                  padding: EdgeInsets.all(6),
-                                                  decoration: BoxDecoration(
-                                                    color: ColorsSchema()
-                                                        .primaryColors,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5),
-                                                  ),
-                                                  child: Center(
-                                                    child: Text(
-                                                      "+ " +
-                                                          data[index]
-                                                              .progressTerakhir
-                                                              .toString(),
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 12),
-                                                      maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
-                                                  ),
                                                 )
                                               ],
                                             ),
                                           ),
-                                          Text(
-                                            "Rp. " +
-                                                NumberFormat.currency(
-                                                        locale: 'id',
-                                                        symbol: '',
-                                                        decimalDigits: 0)
-                                                    .format(data[index]
-                                                            .nominalTarget /
-                                                        data[index].lamaTarget)
-                                                    .toString() +
-                                                "/hari",
-                                            style: TextStyle(
-                                                color: Colors.black54,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500),
+                                        );
+                                      },
+                                    )
+                                  : Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Image.asset(
+                                            "images/not_found_tbg.png",
+                                            width: 200,
+                                            height: 140,
                                           ),
                                           SizedBox(
                                             height: 12,
                                           ),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                child: LinearPercentIndicator(
-                                                  linearGradient:
-                                                      LinearGradient(colors: [
-                                                    Color(0xFF6448FE),
-                                                    Color(0xFF5FC6FF),
-                                                  ]),
-                                                  alignment:
-                                                      MainAxisAlignment.center,
-                                                  lineHeight: 20.0,
-                                                  percent: data[index]
-                                                              .progress !=
-                                                          null
-                                                      ? (data[index].progress /
-                                                          data[index]
-                                                              .nominalTarget)
-                                                      : 0.0,
-                                                  animationDuration: 2500,
-                                                  animation: true,
-                                                  center: data[index]
-                                                              .progress !=
-                                                          null
-                                                      ? Text(
-                                                          ((data[index].progress /
-                                                                          data[index]
-                                                                              .nominalTarget) *
-                                                                      100)
-                                                                  .toString()
-                                                                  .substring(
-                                                                      0,
-                                                                      data[index].progress !=
-                                                                              0
-                                                                          ? 3
-                                                                          : 0) +
-                                                              " %",
-                                                          style: new TextStyle(
-                                                              fontSize: 12.0,
-                                                              color:
-                                                                  Colors.white),
-                                                        )
-                                                      : Text(
-                                                          "0",
-                                                          style: new TextStyle(
-                                                              fontSize: 12.0,
-                                                              color:
-                                                                  Colors.white),
-                                                        ),
-                                                  linearStrokeCap:
-                                                      LinearStrokeCap.roundAll,
-                                                  backgroundColor: Colors.grey,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 6,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text(
-                                                    NumberFormat.currency(
-                                                                locale: 'id',
-                                                                symbol: 'Rp ',
-                                                                decimalDigits:
-                                                                    0)
-                                                            .format(data[index]
-                                                                .progress) +
-                                                        " dari " +
-                                                        NumberFormat.currency(
-                                                                locale: 'id',
-                                                                symbol: 'Rp',
-                                                                decimalDigits:
-                                                                    0)
-                                                            .format(data[index]
-                                                                .nominalTarget),
-                                                    style: TextStyle(
-                                                        color: Colors.black54,
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.w300),
-                                                  ),
-                                                ],
-                                              )
-                                            ],
-                                          )
+                                          Text(
+                                            "Belum ada tabungan",
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                          SizedBox(
+                                            height: 6,
+                                          ),
+                                          Text(
+                                            "Ayo mulai menabung\ndan wujudkan keinginan-mu",
+                                            style: TextStyle(
+                                                color: Colors.black54,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w300),
+                                            textAlign: TextAlign.center,
+                                          ),
                                         ],
                                       ),
-                                    ),
-                                  );
-                                },
-                              )
-                            : Container(
-                                width: MediaQuery.of(context).size.width,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      "images/not_found_tbg.png",
-                                      width: 200,
-                                      height: 140,
-                                    ),
-                                    SizedBox(
-                                      height: 12,
-                                    ),
-                                    Text(
-                                      "Belum ada tabungan",
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                    SizedBox(
-                                      height: 6,
-                                    ),
-                                    Text(
-                                      "Ayo mulai menabung\ndan wujudkan keinginan-mu",
-                                      style: TextStyle(
-                                          color: Colors.black54,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w300),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
-                                ),
-                              );
-                      },
-                    ),
-                  )
-                ]),
-                SizedBox(
-                  height: 16,
-                ),
-                DonasiContaniner()
-              ],
-            )
-          ],
+                                    );
+                            },
+                          ),
+                        )
+                      ]),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  DonasiContaniner()
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  void onWillPop() {
+    DateTime now = DateTime.now();
+    if (currentBackPressTime == null ||
+        now.difference(currentBackPressTime) > Duration(seconds: 2)) {
+      currentBackPressTime = now;
+      Fluttertoast.showToast(
+          msg: "Double Click to exit app",
+          backgroundColor: Colors.black,
+          textColor: Colors.white);
+    }
   }
 }
