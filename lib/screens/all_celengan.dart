@@ -93,6 +93,7 @@ class _ListAllCelenganState extends State<ListAllCelengan> {
                             Flexible(
                               flex: 1,
                               child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
@@ -138,6 +139,28 @@ class _ListAllCelenganState extends State<ListAllCelengan> {
                                       )
                                     ],
                                   ),
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.3,
+                                    height: 30,
+                                    padding: EdgeInsets.all(6),
+                                    decoration: BoxDecoration(
+                                      color: ColorsSchema().primaryColors,
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "+ " +
+                                            data[index]
+                                                .progressTerakhir
+                                                .toString(),
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 12),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  )
                                 ],
                               ),
                             ),
@@ -182,7 +205,13 @@ class _ListAllCelenganState extends State<ListAllCelengan> {
                                                             data[index]
                                                                 .nominalTarget) *
                                                         100)
-                                                    .toString() +
+                                                    .toString()
+                                                    .substring(
+                                                        0,
+                                                        data[index].progress !=
+                                                                0
+                                                            ? 3
+                                                            : 0) +
                                                 " %",
                                             style: new TextStyle(
                                                 fontSize: 14.0,

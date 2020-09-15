@@ -62,7 +62,8 @@ class _TambahTabunganState extends State<TambahTabungan> {
         progress,
         _value,
         0,
-        now.add(Duration(days: 1)).toString());
+        now.add(Duration(days: 1)).toString(),
+        0);
     await db.saveData(dbCelengan);
     print("Saved");
   }
@@ -94,7 +95,8 @@ class _TambahTabunganState extends State<TambahTabungan> {
         widget.celenganModel.progress,
         _value,
         1,
-        now.add(Duration(days: 1)).toString());
+        now.add(Duration(days: 1)).toString(),
+        widget.celenganModel.progressTerakhir);
     dbCelengan.setId(this.cele.id);
     await db.upadteData(dbCelengan);
     setState(() {});

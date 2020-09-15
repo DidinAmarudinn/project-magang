@@ -59,7 +59,8 @@ class _ConfirmDonasiState extends State<ConfirmDonasi> {
         widget.celenganModel.pengingat,
         DateTime.parse(widget.celenganModel.alarmDateTime)
             .add(Duration(days: 1))
-            .toString());
+            .toString(),
+        -widget.pilihanDonasi);
     dbCelengan.setId(widget.celenganModel.id);
     await db.upadteData(dbCelengan);
     addRecordData();

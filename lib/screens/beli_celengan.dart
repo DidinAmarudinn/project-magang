@@ -49,7 +49,7 @@ class _BeliCelenganState extends State<BeliCelengan> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => DetailProduk(),
+                            builder: (context) => DetailProduk(data),
                           ),
                         );
                       },

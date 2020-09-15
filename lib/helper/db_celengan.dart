@@ -29,7 +29,7 @@ class DbCelengan {
 
   void _onCreate(Database database, int version) async {
     await database.execute(
-        "CREATE TABLE db_celengan(id INTEGER PRIMARY KEY, namaTarget TEXT, nominalTarget INTEGER, createDate TEXT, namaKategori TEXT, deskripsi TEXT, lamaTarget INTEGER, progress INTEGER, indexKategori INTEGER, pengingat INTEGER,alarmDateTime TEXT)");
+        "CREATE TABLE db_celengan(id INTEGER PRIMARY KEY, namaTarget TEXT, nominalTarget INTEGER, createDate TEXT, namaKategori TEXT, deskripsi TEXT, lamaTarget INTEGER, progress INTEGER, indexKategori INTEGER, pengingat INTEGER,alarmDateTime TEXT, progressTerakhir INTEGER)");
     print("dbCelengan created");
   }
 
@@ -56,7 +56,8 @@ class DbCelengan {
           list[i]['progress'],
           list[i]['indexKategori'],
           list[i]['pengingat'],
-          list[i]['alarmDateTime']);
+          list[i]['alarmDateTime'],
+          list[i]['progressTerakhir']);
 
       celengan.setId(list[i]['id']);
 
@@ -88,7 +89,8 @@ class DbCelengan {
           list[i]['progress'],
           list[i]['indexKategori'],
           list[i]['pengingat'],
-          list[i]['alarmDateTime']);
+          list[i]['alarmDateTime'],
+          list[i]['progressTerakhir']);
       celengan.setId(list[i]['id']);
 
       listData.add(celengan);
@@ -119,7 +121,8 @@ class DbCelengan {
           list[i]['progress'],
           list[i]['indexKategori'],
           list[i]['pengingat'],
-          list[i]['alarmDateTime']);
+          list[i]['alarmDateTime'],
+          list[i]['progressTerakhir']);
       celengan.setId(list[i]['id']);
 
       listData.add(celengan);

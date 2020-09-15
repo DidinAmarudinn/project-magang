@@ -15,20 +15,9 @@ class Statistik extends StatefulWidget {
 
 class _StatistikState extends State<Statistik> {
   var data;
-  bool load;
   @override
   void initState() {
     super.initState();
-    data = widget.statistik;
-    if (widget.statistik != null) {
-      setState(() {
-        load = false;
-      });
-    } else {
-      setState(() {
-        load = true;
-      });
-    }
   }
 
   @override
@@ -64,7 +53,7 @@ class _StatistikState extends State<Statistik> {
               SizedBox(
                 height: 12,
               ),
-              load
+              widget.statistik == null
                   ? Container(
                       height: 150,
                       width: MediaQuery.of(context).size.width,
@@ -73,7 +62,7 @@ class _StatistikState extends State<Statistik> {
                       height: 150,
                       width: MediaQuery.of(context).size.width,
                       child: Sparkline(
-                        data: data,
+                        data: widget.statistik,
                         lineColor: ColorsSchema().primaryColors,
                         pointsMode: PointsMode.none,
                         lineWidth: 2,

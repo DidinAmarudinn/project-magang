@@ -1,12 +1,37 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:nabung_beramal/colors/colors_schema.dart';
+import 'package:nabung_beramal/data/produk_model.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DetailProduk extends StatefulWidget {
+  final ProdukModel produkModel;
+  DetailProduk(this.produkModel);
   @override
   _DetailProdukState createState() => _DetailProdukState();
 }
 
 class _DetailProdukState extends State<DetailProduk> {
+  void launchWhatsApp({
+    @required String phone,
+    @required String message,
+  }) async {
+    String url() {
+      if (Platform.isIOS) {
+        return "whatsapp://wa.me/$phone/?text=${Uri.parse(message)}";
+      } else {
+        return "whatsapp://send?phone=$phone&text=${Uri.parse(message)}";
+      }
+    }
+
+    if (await canLaunch(url())) {
+      await launch(url());
+    } else {
+      throw 'Could not launch ${url()}';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -99,17 +124,25 @@ class _DetailProdukState extends State<DetailProduk> {
             left: 0,
             right: 0,
             child: Center(
-              child: Container(
-                height: 65,
-                width: 65,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(32.5),
-                    color: ColorsSchema().primaryColors),
-                child: Center(
-                  child: Icon(
-                    Icons.shopping_cart,
-                    color: Colors.white,
-                    size: 30,
+              child: GestureDetector(
+                onTap: () {
+                  launchWhatsApp(
+                      phone: "6287824549282",
+                      message:
+                          "Saya ingin membeli celengan ${widget.produkModel.namaProduk}\n");
+                },
+                child: Container(
+                  height: 65,
+                  width: 65,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(32.5),
+                      color: ColorsSchema().primaryColors),
+                  child: Center(
+                    child: Icon(
+                      Icons.shopping_cart,
+                      color: Colors.white,
+                      size: 30,
+                    ),
                   ),
                 ),
               ),

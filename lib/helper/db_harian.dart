@@ -106,7 +106,6 @@ class DbTabHarain {
 
   Future<List<int>> getAllNominalHarian(int id) async {
     var dbClient = await db;
-    List<int> dddd = [];
     List<Map> res = await dbClient.rawQuery(
         'SELECT nominal as tabungan FROM db_harian WHERE foriegnCelengan= ?',
         <int>[id]);

@@ -32,6 +32,7 @@ class _DetailTabunganState extends State<DetailTabungan> {
   DbCelengan dbCelengan = DbCelengan();
   List<CelenganModel> list;
   List<double> statistik = [];
+  List<double> statistik1 = [];
   List<int> coba = [];
   CelenganModel cele;
   int progress;
@@ -84,7 +85,6 @@ class _DetailTabunganState extends State<DetailTabungan> {
       List<double> _list = coba.map((e) => e.toDouble()).toList();
       _list.insert(0, 0.0);
       statistik = _list;
-      print(statistik);
     });
   }
 
@@ -127,6 +127,7 @@ class _DetailTabunganState extends State<DetailTabungan> {
       _futureCelengan = dbCelengan.getListById(widget.id);
       _futurelistData = db.getAllNominalHarian(widget.id);
       loadDataStat();
+
       loadData();
     });
     print(dateNowTgl);
@@ -144,7 +145,8 @@ class _DetailTabunganState extends State<DetailTabungan> {
         widget.celenganModel.progress,
         widget.celenganModel.indexKategori,
         widget.celenganModel.pengingat,
-        _alarmTime.toString());
+        _alarmTime.toString(),
+        widget.celenganModel.progressTerakhir);
     dbCelengan.setId(widget.celenganModel.id);
 
     await db.upadteData(dbCelengan);
@@ -181,6 +183,7 @@ class _DetailTabunganState extends State<DetailTabungan> {
       margin: EdgeInsets.all(16),
       padding: EdgeInsets.all(10),
       borderRadius: 8,
+      flushbarPosition: FlushbarPosition.TOP,
       backgroundColor: ColorsSchema().primaryColors,
       dismissDirection: FlushbarDismissDirection.HORIZONTAL,
       duration: Duration(seconds: 3),
@@ -307,7 +310,8 @@ class _DetailTabunganState extends State<DetailTabungan> {
         widget.celenganModel.pengingat,
         DateTime.parse(widget.celenganModel.alarmDateTime)
             .add(Duration(days: 1))
-            .toString());
+            .toString(),
+        int.parse(cNominalHarian.text));
     dbCelengan.setId(widget.celenganModel.id);
     await db.upadteData(dbCelengan);
     addRecordData();
