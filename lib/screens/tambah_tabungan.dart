@@ -1,9 +1,11 @@
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:nabung_beramal/colors/colors_schema.dart';
 import 'package:nabung_beramal/data/celengan_model.dart';
 import 'package:nabung_beramal/data/data_kategori.dart';
 import 'package:nabung_beramal/helper/db_celengan.dart';
+import 'package:nabung_beramal/main.dart';
 import 'package:nabung_beramal/screens/home_page.dart';
 import 'package:nabung_beramal/screens/dashboard.dart';
 
@@ -136,21 +138,6 @@ class _TambahTabunganState extends State<TambahTabungan> {
         elevation: 0,
         backgroundColor: ColorsSchema().backgroundColors,
       ),
-      floatingActionButton: FloatingActionButton.extended(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          onPressed: () {
-            if (cNamaTarget.text.length > 0 &&
-                cDeskrpsi.text.length > 0 &&
-                cLamaTarget.text.length > 0 &&
-                cNominalTarget.text.length > 0 &&
-                cKategori.text.length > 0) {
-              saveData();
-            } else {
-              showFlushbar(context);
-            }
-          },
-          backgroundColor: ColorsSchema().primaryColors,
-          label: Text(widget.isNew ? textButton : "Update")),
       body: ListView(
         padding: EdgeInsets.only(left: 16, right: 16, bottom: 20),
         children: [
@@ -245,6 +232,37 @@ class _TambahTabunganState extends State<TambahTabungan> {
                 height: 12,
               ),
               buildColumn(context, "Deskripsi", TextInputType.text, cDeskrpsi),
+              GestureDetector(
+                onTap: () {
+                  if (cNamaTarget.text.length > 0 &&
+                      cDeskrpsi.text.length > 0 &&
+                      cLamaTarget.text.length > 0 &&
+                      cNominalTarget.text.length > 0 &&
+                      cKategori.text.length > 0) {
+                    saveData();
+                    scheduleAlarm(
+                        cNamaTarget.text,
+                        "ayo segera sisihkan uangmu",
+                        now.add(Duration(days: 1)));
+                  } else {
+                    showFlushbar(context);
+                  }
+                },
+                child: Container(
+                  margin: EdgeInsets.only(top: 16),
+                  width: MediaQuery.of(context).size.width,
+                  height: 50,
+                  decoration: BoxDecoration(
+                      color: ColorsSchema().primaryColors,
+                      borderRadius: BorderRadius.circular(12)),
+                  child: Center(
+                    child: Text(
+                      "Simpan",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ],
@@ -290,5 +308,27 @@ class _TambahTabunganState extends State<TambahTabungan> {
         )
       ],
     );
+  }
+
+  void scheduleAlarm(String title, String body, DateTime dateTime) async {
+    var scheduleNotificationDateTime = dateTime.add(Duration(seconds: 10));
+
+    var androidPlatformChanelSpesific = AndroidNotificationDetails(
+      'alarm_notif',
+      'alarm_notif',
+      'Channel for alarm notif',
+      icon: 'app_icon',
+      sound: RawResourceAndroidNotificationSound('a_long_cold_sting'),
+      largeIcon: DrawableResourceAndroidBitmap('app_icon'),
+    );
+    var iosPlatfromChanelSpesifics = IOSNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+    var platfromChannelSpesific = NotificationDetails(
+        androidPlatformChanelSpesific, iosPlatfromChanelSpesifics);
+    await flutterLocalNotificationsPlugin.schedule(
+        0, title, body, scheduleNotificationDateTime, platfromChannelSpesific);
   }
 }

@@ -23,7 +23,7 @@ class _TimeLineTabunganState extends State<TimeLineTabungan> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "Riwayat Nabung",
+              "Riwayat Tabungan",
               style: TextStyle(
                   color: Colors.black,
                   fontSize: 18,

@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -183,7 +182,6 @@ class _DetailTabunganState extends State<DetailTabungan> {
       margin: EdgeInsets.all(16),
       padding: EdgeInsets.all(10),
       borderRadius: 8,
-      flushbarPosition: FlushbarPosition.TOP,
       backgroundColor: ColorsSchema().primaryColors,
       dismissDirection: FlushbarDismissDirection.HORIZONTAL,
       duration: Duration(seconds: 3),
@@ -197,10 +195,11 @@ class _DetailTabunganState extends State<DetailTabungan> {
       margin: EdgeInsets.all(16),
       padding: EdgeInsets.all(10),
       borderRadius: 8,
+      flushbarPosition: FlushbarPosition.TOP,
       backgroundColor: ColorsSchema().primaryColors,
       dismissDirection: FlushbarDismissDirection.HORIZONTAL,
       duration: Duration(seconds: 3),
-      title: "Celengan dan Tabungan",
+      title: "Celengan dan Tabungan Harian",
       message: "berhasil dihapus",
     )..show(context);
   }
@@ -274,9 +273,7 @@ class _DetailTabunganState extends State<DetailTabungan> {
                         updatePengingat();
                         scheduleAlarm(
                             widget.celenganModel.namaTarget,
-                            widget.celenganModel.progress.toString() +
-                                " dari " +
-                                widget.celenganModel.nominalTarget.toString(),
+                            "ayo segera sisihkan uangmue",
                             scheduleAlarmDateTime);
                       },
                       label: Text("save"),
@@ -471,12 +468,8 @@ class _DetailTabunganState extends State<DetailTabungan> {
             } else {
               setState(() {
                 saveData();
-                scheduleAlarm(
-                    widget.celenganModel.namaTarget,
-                    widget.celenganModel.progress.toString() +
-                        " dari " +
-                        widget.celenganModel.nominalTarget.toString(),
-                    DateTime.parse(widget.celenganModel.alarmDateTime));
+                scheduleAlarm(widget.celenganModel.namaTarget,
+                    "ayo segera sisihkan uangmu", now.add(Duration(days: 1)));
                 _futureCelengan = dbCelengan.getList();
               });
             }

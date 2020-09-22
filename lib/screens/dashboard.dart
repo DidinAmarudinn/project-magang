@@ -148,25 +148,26 @@ class _DashboardState extends State<Dashboard> {
                               ),
                               onPressed: () {
                                 setState(() {
-                                  xOffset = 200;
-                                  yOffset = 150;
+                                  xOffset =
+                                      MediaQuery.of(context).size.width * 0.5;
+                                  yOffset =
+                                      MediaQuery.of(context).size.height * 0.20;
                                   scaleFactor = 0.6;
                                   isOpen = true;
                                 });
                               },
                             ),
                       GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => BeliCelengan()));
-                        },
-                        child: Image.asset(
-                          "images/outline_shop.png",
-                          scale: 1,
-                        ),
-                      )
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => BeliCelengan()));
+                          },
+                          child: Icon(
+                            Icons.shopping_basket,
+                            color: Colors.black,
+                          ))
                     ],
                   ),
                   SizedBox(
@@ -439,11 +440,6 @@ class _DashboardState extends State<Dashboard> {
                                                         ],
                                                       ),
                                                       Container(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            0.15,
                                                         height: 30,
                                                         padding:
                                                             EdgeInsets.all(6),
@@ -457,10 +453,19 @@ class _DashboardState extends State<Dashboard> {
                                                         ),
                                                         child: Center(
                                                           child: Text(
-                                                            "+ " +
-                                                                data[index]
-                                                                    .progressTerakhir
-                                                                    .toString(),
+                                                            NumberFormat.currency(
+                                                                    locale:
+                                                                        'id',
+                                                                    symbol: data[index].progressTerakhir.toString()[0] ==
+                                                                            "-"
+                                                                        ? ""
+                                                                        : "+",
+                                                                    decimalDigits:
+                                                                        0)
+                                                                .format(data[
+                                                                        index]
+                                                                    .progressTerakhir)
+                                                                .toString(),
                                                             style: TextStyle(
                                                                 color: Colors
                                                                     .white,

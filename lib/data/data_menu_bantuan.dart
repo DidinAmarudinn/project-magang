@@ -15,5 +15,5 @@ List<DataBantuan> listMenuHelp = [
   DataBantuan("Menghapus Target Tabungan",
       "1. Klik target tabungan mana yang akan kita hapus\n2. Klik menu dipojok kanan atas\n3. Klik delete untuk mengapus target tabungan"),
   DataBantuan("Mengatur Pengingat",
-      "1. Klik target tabungan mana yang akan kita atur pengingat.\n2. Klik menu dipojok kanan atas\n3. Klik atur pengingat\4. Maka akan diarahkan ke halaman untuk mengatur pengingat")
+      "1. Klik target tabungan mana yang akan kita atur pengingat.\n2. Klik menu dipojok kanan atas\n3. Klik atur pengingat\n4. Maka akan diarahkan ke halaman untuk mengatur pengingat")
 ];

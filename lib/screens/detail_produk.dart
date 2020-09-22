@@ -44,21 +44,26 @@ class _DetailProdukState extends State<DetailProduk> {
                 Stack(
                   children: [
                     Image.asset(
-                      "images/produka.jpeg",
+                      widget.produkModel.imageAsset,
                       height: MediaQuery.of(context).size.height * 0.5,
                       fit: BoxFit.cover,
                     ),
-                    Container(
-                      padding: EdgeInsets.all(8),
-                      margin:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 55),
-                      decoration: BoxDecoration(
-                        color: ColorsSchema().primaryColors,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Icon(
-                        Icons.arrow_back_ios,
-                        color: Colors.white,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(8),
+                        margin:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 55),
+                        decoration: BoxDecoration(
+                          color: ColorsSchema().primaryColors,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                     Positioned(
@@ -71,14 +76,14 @@ class _DetailProdukState extends State<DetailProduk> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Tabungan Haji",
+                              widget.produkModel.namaProduk,
                               style: TextStyle(
                                   color: Colors.black87,
                                   fontSize: 18,
                                   fontWeight: FontWeight.w500),
                             ),
                             Text(
-                              "Rp. 20.000",
+                              widget.produkModel.harga,
                               style: TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.w600,

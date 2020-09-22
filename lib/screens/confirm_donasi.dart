@@ -15,8 +15,11 @@ import 'package:url_launcher/url_launcher.dart';
 class ConfirmDonasi extends StatefulWidget {
   final int pilihanDonasi;
   final int idCelengan;
+  final String namaTabungan;
+
   final CelenganModel celenganModel;
-  ConfirmDonasi(this.pilihanDonasi, this.idCelengan, this.celenganModel);
+  ConfirmDonasi(this.pilihanDonasi, this.idCelengan, this.celenganModel,
+      this.namaTabungan);
   @override
   _ConfirmDonasiState createState() => _ConfirmDonasiState();
 }
@@ -40,7 +43,7 @@ class _ConfirmDonasiState extends State<ConfirmDonasi> {
         "${now.day}-${now.month}-${now.year}, ${now.hour} : ${now.minute}";
     String dateNowTgl = "${now.day}-${now.month}-${now.year}";
     var dbtabHar = TabunganHarainModel(-widget.pilihanDonasi, "Donasi", dateNow,
-        random(), widget.idCelengan, dateNowTgl);
+        random(), widget.celenganModel.id, dateNowTgl);
     await db.saveData(dbtabHar);
     print(dateNowTgl);
   }
@@ -57,13 +60,20 @@ class _ConfirmDonasiState extends State<ConfirmDonasi> {
         (widget.celenganModel.progress - widget.pilihanDonasi),
         widget.celenganModel.indexKategori,
         widget.celenganModel.pengingat,
-        DateTime.parse(widget.celenganModel.alarmDateTime)
-            .add(Duration(days: 1))
-            .toString(),
-        -widget.pilihanDonasi);
+        now.add(Duration(days: 1)).toString(),
+        (-widget.pilihanDonasi));
     dbCelengan.setId(widget.celenganModel.id);
+
     await db.upadteData(dbCelengan);
     addRecordData();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print(widget.idCelengan);
+    print(widget.celenganModel.id);
   }
 
   void showFlushbar(BuildContext context) {
@@ -196,9 +206,14 @@ class _ConfirmDonasiState extends State<ConfirmDonasi> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      updateRecord();
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) => Home()));
+                      if (widget.namaTabungan == "Lainnya") {
+                        Navigator.pushReplacement(context,
+                            MaterialPageRoute(builder: (context) => Home()));
+                      } else {
+                        updateRecord();
+                        Navigator.pushReplacement(context,
+                            MaterialPageRoute(builder: (context) => Home()));
+                      }
                     },
                     child: Container(
                       margin: EdgeInsets.only(left: 16, right: 16),

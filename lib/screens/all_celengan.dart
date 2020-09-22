@@ -140,8 +140,6 @@ class _ListAllCelenganState extends State<ListAllCelengan> {
                                     ],
                                   ),
                                   Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.3,
                                     height: 30,
                                     padding: EdgeInsets.all(6),
                                     decoration: BoxDecoration(
@@ -150,10 +148,18 @@ class _ListAllCelenganState extends State<ListAllCelengan> {
                                     ),
                                     child: Center(
                                       child: Text(
-                                        "+ " +
-                                            data[index]
-                                                .progressTerakhir
-                                                .toString(),
+                                        NumberFormat.currency(
+                                                locale: 'id',
+                                                symbol: data[index]
+                                                            .progressTerakhir
+                                                            .toString()[0] ==
+                                                        "-"
+                                                    ? ""
+                                                    : "+",
+                                                decimalDigits: 0)
+                                            .format(
+                                                data[index].progressTerakhir)
+                                            .toString(),
                                         style: TextStyle(
                                             color: Colors.white, fontSize: 12),
                                         maxLines: 1,

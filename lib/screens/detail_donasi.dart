@@ -35,6 +35,10 @@ class _DetailDonasiState extends State<DetailDonasi> {
 
   getList() async {
     await _future.then((value) => list = value);
+    list.insert(
+        0,
+        CelenganModel("Lainnya", 1000000000000, "", 0, "", "",
+            10000000000000000, 0, 0, "", 0));
     setState(() {
       if (list.length > 0) {
         namaTabungan = list[0].namaTarget;
@@ -124,7 +128,6 @@ class _DetailDonasiState extends State<DetailDonasi> {
                             nominal = int.parse(listDonasi[index].nominal) == 0
                                 ? ""
                                 : listDonasi[index].nominal;
-
                             if (_value == 9) {
                               setState(() {
                                 show = true;
@@ -222,6 +225,8 @@ class _DetailDonasiState extends State<DetailDonasi> {
                                 setState(() {
                                   _valta = index;
                                   namaTabungan = list[index].namaTarget;
+                                  celenganModel = list[index];
+                                  idCelengan = list[index].id;
                                 });
                               },
                             ),
@@ -245,8 +250,8 @@ class _DetailDonasiState extends State<DetailDonasi> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => ConfirmDonasi(
-                          int.parse(nominal), idCelengan, celenganModel)));
+                      builder: (context) => ConfirmDonasi(int.parse(nominal),
+                          idCelengan, celenganModel, namaTabungan)));
               print("nominal" + nominal);
               print("namaTabungan" + namaTabungan);
             });

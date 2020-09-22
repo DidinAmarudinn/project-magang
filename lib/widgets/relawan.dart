@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:nabung_beramal/colors/colors_schema.dart';
-import 'package:nabung_beramal/data/relawan_model.dart';
+import 'package:nabung_beramal/data/dummyrelawan.dart';
 import 'package:nabung_beramal/screens/detail_donasi.dart';
 
 class Relawan extends StatefulWidget {
+  final DummyRelawanModel list;
+  Relawan(this.list);
   @override
   _RelawanState createState() => _RelawanState();
 }
@@ -14,19 +16,10 @@ class _RelawanState extends State<Relawan> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 16.0),
-          child: Text(
-            "Daftar Relawan Penyalur",
-            style: TextStyle(
-                color: Colors.black, fontSize: 18, fontWeight: FontWeight.w500),
-          ),
-        ),
         Expanded(
           child: ListView.builder(
-            itemCount: listRelawan.length,
+            itemCount: widget.list.data.length,
             itemBuilder: (context, index) {
-              RelawanModel data = listRelawan[index];
               return Container(
                 margin: EdgeInsets.only(top: 16),
                 child: Column(
@@ -39,7 +32,9 @@ class _RelawanState extends State<Relawan> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                data.nama,
+                                widget.list.data[index].firstName +
+                                    " " +
+                                    widget.list.data[index].lastName,
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 16,
@@ -51,7 +46,7 @@ class _RelawanState extends State<Relawan> {
                               Row(
                                 children: [
                                   Text(
-                                    data.alamat,
+                                    widget.list.data[index].email,
                                     style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 12,
@@ -61,7 +56,7 @@ class _RelawanState extends State<Relawan> {
                                     width: 8,
                                   ),
                                   Text(
-                                    "Rek." + data.noRek,
+                                    "Rek." + "033333333312",
                                     style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 12,
